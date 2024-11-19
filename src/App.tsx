@@ -77,17 +77,16 @@ function Folder({ folder }: { folder: Folder }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="gap-y-2 flex flex-col items-start">
-      <div className="flex items-center">
-        <div className="flex items-center rounded px-2 py-1 hover:bg-muted cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
-          {!folder.children ? <File className="icon-sm" /> : isOpen ? <FolderOpen className="icon-sm" /> : <FolderClosed className="icon-sm" />}
-          <p className="ml-2 group-hover:text-primary">
-            {folder.label}
-          </p>
-        </div>
+    <div className="flex flex-col justify-center gap-y-2 items-start w-full" >
+      <div className="group flex items-center hover:bg-muted cursor-pointer w-full px-2 py-1 rounded " onClick={() => setIsOpen(!isOpen)}>
+        {!folder.children ? <File className="icon-sm group-hover:text-secondary" /> : isOpen ? <FolderOpen className="icon-sm group-hover:text-secondary" /> : <FolderClosed className="icon-sm group-hover:text-secondary" />}
+        <p className="ml-2 group-hover:text-secondary">
+          {folder.label}
+        </p>
       </div>
       {isOpen && folder.children?.map(child => (
-        <div className="ml-4">
+        <div className="ml-4 w-[calc(100%-1rem)]">
+          {/* ml-4 = 1rem */}
           <Folder folder={child} />
         </div>
       ))}

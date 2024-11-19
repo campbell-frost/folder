@@ -50,6 +50,6 @@
 
 @layer base {
   .icon-sm {  
-    @apply w-4 h-4;
+    @apply w-4 h-4 hover:text-primary;
   }
 }
