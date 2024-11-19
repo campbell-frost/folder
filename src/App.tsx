@@ -1,88 +1,37 @@
 import { useState } from "react";
 import ToggleTheme from "./components/ToggleTheme";
 import { FolderOpen, FolderClosed, File } from "lucide-react";
+import { type Folder, file } from "./assets/file";
+import * as React from "react";
+import { twMerge } from "tailwind-merge";
 
-const root: Folder[] = [
-  {
-    label: "src",
-    children: [
-      {
-        label: "components",
-        children: [
-          {
-            label: "ToggleTheme.tsx",
-          }
-        ]
-      },
-      {
-        label: "hooks",
-        children: [
-          {
-            label: "Theme.tsx",
-          }
-        ]
-      },
-      {
-        label: "App.tsx",
-      },
-      {
-        label: "index.css",
-      },
-      {
-        label: "main.tsx",
-      },
-      {
-        label: "vite-env.d.ts",
-      }
-    ]
-  },
-  {
-    label: ".gitignore",
-  },
-  {
-    label: "eslint.config.js",
-  },
-  {
-    label: "index.html",
-  },
-  {
-    label: "package-lock.json",
-  },
-  {
-    label: "package.json",
-  },
-  {
-    label: "postcss.config.js",
-  },
-  {
-    label: "README.md",
-  },
-  {
-    label: "tailwind.config.js",
-  },
-  {
-    label: "tsconfig.json",
-  },
-  {
-    label: "vite.config.ts",
-  }
-];
-
-type Folder = {
-  label: string;
-  children?: Folder[];
+function Item({
+  children,
+  className
+}: {
+  children: React.ReactNode,
+  className?: string
+}) {
+  return (
+    <div className="flex items-center">
+      <FolderOpen />
+      <h1 className={twMerge("ml-2 group-hover:text-secondary", className)}>{children}</h1>
+    </div>
+  );
 }
 
 function Folder({ folder }: { folder: Folder }) {
   const [isOpen, setIsOpen] = useState(false);
 
+
   return (
     <div className="flex flex-col justify-center gap-y-2 items-start w-full" >
-      <div className="group flex items-center hover:bg-muted cursor-pointer w-full px-2 py-1 rounded " onClick={() => setIsOpen(!isOpen)}>
-        {!folder.children ? <File className="icon-sm group-hover:text-secondary" /> : isOpen ? <FolderOpen className="icon-sm group-hover:text-secondary" /> : <FolderClosed className="icon-sm group-hover:text-secondary" />}
-        <p className="ml-2 group-hover:text-secondary">
-          {folder.label}
-        </p>
+      <div className="group flex items-center hover:bg-muted cursor-pointer w-full px-2 py-1 rounded " onClick={() => { setIsOpen(!isOpen); folder.selected = !folder.selected }}>
+        <Item className={folder.selected ? "text-primary" : ""}>
+          <p className="ml-2 group-hover:text-secondary">
+            {folder.label}
+          </p>
+        </Item>
       </div>
       {isOpen && folder.children?.map(child => (
         <div className="ml-4 w-[calc(100%-1rem)]">
@@ -96,7 +45,7 @@ function Folder({ folder }: { folder: Folder }) {
 
 function App() {
   // for any snoopers im going to add state eventually
-  const [folder, _] = useState(root);
+  const [folder, _] = useState(file);
   return (
     <div className="bg-background flex-col flex h-screen justify-center text-foreground items-start">
       <div className="absolute top-0 right-0 m-3 ">
