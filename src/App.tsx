@@ -96,6 +96,7 @@ function Folder({ folder }: { folder: Folder }) {
 }
 
 function App() {
+  // for any snoopers im going to add state eventually
   const [folder, _] = useState(root);
   return (
     <div className="bg-background flex-col flex h-screen justify-center text-foreground items-start">
