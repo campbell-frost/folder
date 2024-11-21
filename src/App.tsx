@@ -7,36 +7,42 @@ import { twMerge } from "tailwind-merge";
 
 function Item({
   children,
-  className
+  className,
+  isOpen,
+  isFile
 }: {
   children: React.ReactNode,
-  className?: string
+  className?: string,
+  isOpen?: boolean,
+  isFile?: boolean
 }) {
   return (
     <div className="flex items-center">
-      <FolderOpen />
+      {isFile ? <File /> : isOpen ? <FolderOpen /> : <FolderClosed />}
       <h1 className={twMerge("ml-2 group-hover:text-secondary", className)}>{children}</h1>
     </div>
   );
 }
 
-function Folder({ folder }: { folder: Folder }) {
+function Folder({ folder, onSelect, selectedId }: {
+  folder: Folder,
+  onSelect: (label: string) => void,
+  selectedId: string | null
+}) {
   const [isOpen, setIsOpen] = useState(false);
 
-
   return (
-    <div className="flex flex-col justify-center gap-y-2 items-start w-full" >
-      <div className="group flex items-center hover:bg-muted cursor-pointer w-full px-2 py-1 rounded " onClick={() => { setIsOpen(!isOpen); folder.selected = !folder.selected }}>
-        <Item className={folder.selected ? "text-primary" : ""}>
-          <p className="ml-2 group-hover:text-secondary">
-            {folder.label}
-          </p>
-        </Item>
+    <div className="flex flex-col justify-center gap-y-2 items-start w-full">
+      <div className={twMerge("group flex items-center hover:bg-muted cursor-pointer w-full px-2 py-1 rounded", selectedId === folder.label ? "bg-muted" : "")}
+        onClick={() => {
+          setIsOpen(!isOpen);
+          onSelect(folder.label);
+        }}>
+        <Item isOpen={isOpen} isFile={!folder.children} children={folder.label} />
       </div>
       {isOpen && folder.children?.map(child => (
-        <div className="ml-4 w-[calc(100%-1rem)]">
-          {/* ml-4 = 1rem */}
-          <Folder folder={child} />
+        <div key={child.label} className="ml-4 w-[calc(100%-1rem)]">
+          <Folder folder={child} onSelect={onSelect} selectedId={selectedId} />
         </div>
       ))}
     </div>
@@ -44,16 +50,22 @@ function Folder({ folder }: { folder: Folder }) {
 }
 
 function App() {
-  // for any snoopers im going to add state eventually
   const [folder, _] = useState(file);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
   return (
     <div className="bg-background flex-col flex h-screen justify-center text-foreground items-start">
       <div className="absolute top-0 right-0 m-3 ">
         <ToggleTheme />
       </div>
-      <div className=" p-3 flex flex-col gap-y-2 w-60 h-full border-r-2">
+      <div className="p-3 flex flex-col gap-y-2 w-60 h-full border-r-2">
         {folder.map(folder => (
-          <Folder folder={folder} />
+          <Folder
+            key={folder.label}
+            folder={folder}
+            onSelect={setSelectedId}
+            selectedId={selectedId}
+          />
         ))}
       </div>
     </div>
